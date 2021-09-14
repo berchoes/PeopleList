@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity() {
             errorBottomSheet.dismiss()
         }
         errorBottomSheet.apply {
-//            setCancelable(false)
+            setCancelable(false)
             setContentView(bottomSheetView)
             show()
         }
