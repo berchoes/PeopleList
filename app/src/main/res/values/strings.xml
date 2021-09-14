@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">PeopleList</string>
     <string name="no_one_to_show">This is a lonely place :(</string>
+    <string name="error">FATAL ERROR</string>
+    <string name="retry">Retry</string>
 </resources>

@@ -1,9 +1,12 @@
 package com.example.peoplelist.ui.main
 
-import android.content.res.Resources
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +16,7 @@ import com.example.peoplelist.databinding.ActivityMainBinding
 import com.example.peoplelist.entity.Person
 import com.example.peoplelist.util.extensions.gone
 import com.example.peoplelist.util.extensions.visible
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.koin.android.ext.android.inject
 
 
@@ -27,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         initViews()
         observeEvents()
         initListeners()
-        viewModel.fetchPeople(viewModel.nextValue)
+        fetchPeople()
     }
 
     private fun initDataBinding() {
@@ -38,14 +42,12 @@ class MainActivity : AppCompatActivity() {
     private fun setPeopleList(list: List<Person>) {
         val oldCount = viewModel.peoplePagedList.size
         list.forEach {
-            if (viewModel.peoplePagedList.none { p -> p.id == it.id }) viewModel.peoplePagedList.add(
-                it
-            )
+            if (viewModel.peoplePagedList.none { p -> p.id == it.id }) viewModel.peoplePagedList.add(it)  //preventing id duplicates.
         }
         binding.rvPeople.adapter?.notifyItemRangeInserted(oldCount, viewModel.peoplePagedList.size)
-        if(viewModel.peoplePagedList.size < 14){
-            binding.srMain.isRefreshing = true
-            viewModel.fetchPeople(viewModel.nextValue)
+
+        if(viewModel.peoplePagedList.size < 14){ //TODO find a better solution.
+            fetchPeople()
         }
     }
 
@@ -82,10 +84,8 @@ class MainActivity : AppCompatActivity() {
             binding.srMain.isRefreshing = false
         })
         viewModel.eventOnError.observe(this, {
-
             binding.srMain.isRefreshing = false
-            Toast.makeText(this, it.errorDescription, Toast.LENGTH_LONG).show()
-
+            showErrorBottomSheet(errorDescription = it.errorDescription)
         })
     }
 
@@ -107,20 +107,41 @@ class MainActivity : AppCompatActivity() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1)) {
-                    binding.srMain.isRefreshing = true
-                    viewModel.fetchPeople(viewModel.nextValue)
+                    fetchPeople()
                 }
             }
         })
 
         binding.tvTryAgain.setOnClickListener{
-            binding.srMain.isRefreshing = true
-            viewModel.fetchPeople(viewModel.nextValue)
+            fetchPeople()
+            binding.tvTryAgain.gone()
+            binding.ivRefresh.gone()
         }
 
         binding.ivRefresh.setOnClickListener {
-            binding.srMain.isRefreshing = true
-            viewModel.fetchPeople(viewModel.nextValue)
+            fetchPeople()
+            binding.tvTryAgain.gone()
+            binding.ivRefresh.gone()
+        }
+    }
+
+    private fun fetchPeople(){
+        binding.srMain.isRefreshing = true
+        viewModel.fetchPeople(viewModel.nextValue)
+    }
+
+    private fun showErrorBottomSheet(errorDescription: String){
+        val errorBottomSheet = BottomSheetDialog(this,R.style.BottomSheetDialogTheme)
+        val bottomSheetView = LayoutInflater.from(applicationContext).inflate(R.layout.bottom_sheet,
+            findViewById<ConstraintLayout>(R.id.bottomSheet))
+        bottomSheetView.findViewById<TextView>(R.id.tvErrorDescription).text = errorDescription
+        bottomSheetView.findViewById<Button>(R.id.btRetry).setOnClickListener {
+            fetchPeople()
+            errorBottomSheet.dismiss()
+        }
+        errorBottomSheet.apply {
+            setContentView(bottomSheetView)
+            show()
         }
     }
 }
