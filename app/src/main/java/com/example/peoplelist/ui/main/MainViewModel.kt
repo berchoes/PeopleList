@@ -21,8 +21,10 @@ class MainViewModel(private val repository: MainRepository): ViewModel() {
     val peopleListLiveData: LiveData<FetchResponse> get() = _peopleListLiveData
     private val _eventOnError = MutableLiveData<FetchError>()
     val eventOnError: LiveData<FetchError> get() = _eventOnError
+
     var nextValue: String? = null
     var peoplePagedList = mutableListOf<Person>()
+    var persistenceCounter = 0
 
 
     fun fetchPeople(next: String?){

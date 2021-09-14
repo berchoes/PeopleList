@@ -1,7 +1,9 @@
 package com.example.peoplelist.ui.main
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.peoplelist.R
 import com.example.peoplelist.databinding.ActivityMainBinding
 import com.example.peoplelist.entity.Person
+import com.example.peoplelist.ui.dialog.InvisibleProgressDialog
 import com.example.peoplelist.util.extensions.gone
 import com.example.peoplelist.util.extensions.visible
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -24,6 +27,8 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by inject()
     private lateinit var binding: ActivityMainBinding
+    private var isProgressShown = false
+    private var progressDialog: InvisibleProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,17 +46,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun setPeopleList(list: List<Person>) {
         val oldCount = viewModel.peoplePagedList.size
+
         list.forEach {
-            if (viewModel.peoplePagedList.none { p -> p.id == it.id }) viewModel.peoplePagedList.add(it)  //preventing id duplicates.
+            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(it)  //preventing id duplicates.
         }
         binding.rvPeople.adapter?.notifyItemRangeInserted(oldCount, viewModel.peoplePagedList.size)
 
-        if(viewModel.peoplePagedList.size < 14){ //TODO find a better solution.
+        if(oldCount == viewModel.peoplePagedList.size) viewModel.persistenceCounter++ else viewModel.persistenceCounter = 0
+        if(viewModel.persistenceCounter > 7) Toast.makeText(this,"Chill... We ran out of people.", Toast.LENGTH_SHORT).show()
+
+        //after the initial load of data, call fetchPeople() again if the recyclerView height < screen height.
+        binding.rvPeople.measure(View.MeasureSpec.makeMeasureSpec(binding.rvPeople.width, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED)
+        val recyclerHeight = binding.rvPeople.measuredHeight
+        val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+        if(recyclerHeight < screenHeight){
             fetchPeople()
         }
     }
 
     private fun initViews() {
+        progressDialog = InvisibleProgressDialog(this)
         binding.rvPeople.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             val decoration =
@@ -82,9 +96,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             binding.srMain.isRefreshing = false
+            showProgress(false)
         })
         viewModel.eventOnError.observe(this, {
             binding.srMain.isRefreshing = false
+            showProgress(false)
             showErrorBottomSheet(errorDescription = it.errorDescription)
         })
     }
@@ -116,17 +132,20 @@ class MainActivity : AppCompatActivity() {
             fetchPeople()
             binding.tvTryAgain.gone()
             binding.ivRefresh.gone()
+            binding.tvNobody.gone()
         }
 
         binding.ivRefresh.setOnClickListener {
             fetchPeople()
             binding.tvTryAgain.gone()
+            binding.tvNobody.gone()
             binding.ivRefresh.gone()
         }
     }
 
     private fun fetchPeople(){
         binding.srMain.isRefreshing = true
+        showProgress(true)
         viewModel.fetchPeople(viewModel.nextValue)
     }
 
@@ -140,8 +159,23 @@ class MainActivity : AppCompatActivity() {
             errorBottomSheet.dismiss()
         }
         errorBottomSheet.apply {
+//            setCancelable(false)
             setContentView(bottomSheetView)
             show()
+        }
+    }
+
+    private fun showProgress(show: Boolean) {
+        if (show) {
+            if (!isProgressShown) {
+                progressDialog?.show(supportFragmentManager, "ProgressDialog")
+                isProgressShown = true
+            }
+        } else {
+            if (isProgressShown) {
+                progressDialog?.dismiss()
+                isProgressShown = false
+            }
         }
     }
 }
