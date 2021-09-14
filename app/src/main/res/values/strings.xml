@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PeopleList</string>
+    <string name="no_one_to_show">This is a lonely place :(</string>
 </resources>

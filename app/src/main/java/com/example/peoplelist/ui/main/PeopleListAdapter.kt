@@ -1,4 +1,4 @@
-package com.example.peoplelist.ui
+package com.example.peoplelist.ui.main
 
 /**
  * Created by Berk Ç. on 9/13/21.
@@ -16,13 +16,13 @@ class PeopleListAdapter(private val items: List<Person>) :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): PeopleListAdapter.ViewHolder {
+    ): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = ItemPeopleListBinding.inflate(layoutInflater, parent, false)
         return ViewHolder(itemBinding)
     }
 
-    override fun onBindViewHolder(holder: PeopleListAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(items[position])
     }
 
@@ -34,5 +34,4 @@ class PeopleListAdapter(private val items: List<Person>) :
             binding.tvPerson.text = "${item.fullName} (${item.id})"
         }
     }
-
 }

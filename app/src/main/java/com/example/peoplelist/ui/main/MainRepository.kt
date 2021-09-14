@@ -1,4 +1,4 @@
-package com.example.peoplelist.ui
+package com.example.peoplelist.ui.main
 
 import com.example.peoplelist.base.BaseResult
 import com.example.peoplelist.data.DataSource

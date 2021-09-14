@@ -1,23 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.MainActivity">
+        android:layout_height="match_parent">
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/srMain"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvNobody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/no_one_to_show"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTryAgain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Try again"
+                android:textColor="#0F17EA"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvNobody" />
+
+            <ImageView
+                android:id="@+id/ivRefresh"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_refresh"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@id/tvTryAgain"
+                app:layout_constraintTop_toTopOf="@id/tvTryAgain"
+                app:layout_constraintStart_toEndOf="@id/tvTryAgain" />
+
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPeople"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/rvPeople"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

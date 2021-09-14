@@ -16,7 +16,7 @@ private data class ProcessResult(val fetchResponse: FetchResponse?, val fetchErr
 
 class DataSource {
     companion object {
-        var people: List<Person> = listOf()
+        private var people: List<Person> = listOf()
     }
 
     private object Constants {
@@ -26,7 +26,7 @@ class DataSource {
         val highWaitTimeRange: ClosedRange<Double> = 1.0..2.0 // lower bound must be >= 0.0, upper bound must be > lower bound
         const val errorProbability = 0.05 // must be > 0.0
         const val backendBugTriggerProbability = 0.05 // must be > 0.0
-        const val emptyFirstResultsProbability = 0.1 // must be > 0.0
+        const val emptyFirstResultsProbability = 0.5 // must be > 0.0
     }
 
     init {
