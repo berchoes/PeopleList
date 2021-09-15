@@ -11,14 +11,9 @@ import com.example.peoplelist.R
  */
 class InvisibleProgressDialog(private val activity: Activity) : DialogFragment() {
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        val dialog = Dialog(activity)
-
-        return dialog.apply {
-            setContentView(R.layout.progress_dialog)
-            window?.setDimAmount(0.08f)
-            isCancelable = false
-        }
+    override fun onCreateDialog(savedInstanceState: Bundle?) = Dialog(activity).apply {
+        setContentView(R.layout.progress_dialog)
+        window?.setDimAmount(0.08f)
+        isCancelable = false
     }
 }

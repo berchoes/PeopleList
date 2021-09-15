@@ -132,9 +132,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
+
         binding.rvPeople.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
+
                 if (!recyclerView.canScrollVertically(RecyclerView.FOCUS_DOWN) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     fetchPeople()
                 }

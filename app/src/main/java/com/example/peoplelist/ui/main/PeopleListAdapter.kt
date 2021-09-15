@@ -3,6 +3,7 @@ package com.example.peoplelist.ui.main
 /**
  * Created by Berk Ç. on 9/13/21.
  */
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +31,7 @@ class PeopleListAdapter(private val items: List<Person>) :
 
     inner class ViewHolder(private val binding: ItemPeopleListBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bind(item: Person) {
             binding.tvPerson.text = "${item.fullName} (${item.id})"
         }
