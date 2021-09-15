@@ -33,7 +33,7 @@
                 android:layout_marginTop="10dp"
                 android:text="Try again"
                 android:textColor="#0F17EA"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,6 @@
             <ImageView
                 android:id="@+id/ivRefresh"
                 android:layout_width="wrap_content"
-                android:layout_marginStart="8dp"
                 android:src="@drawable/ic_refresh"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
