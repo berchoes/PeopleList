@@ -9,15 +9,16 @@ import com.example.peoplelist.R
 /**
  * Created by Berk Ç. on 9/14/21.
  */
-class InvisibleProgressDialog(private val activity : Activity) : DialogFragment() {
+class InvisibleProgressDialog(private val activity: Activity) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         val dialog = Dialog(activity)
 
         return dialog.apply {
             setContentView(R.layout.progress_dialog)
             window?.setDimAmount(0.08f)
-            isCancelable= false
+            isCancelable = false
         }
     }
 }

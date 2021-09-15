@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         binding.rvPeople.adapter?.notifyItemRangeInserted(oldCount, viewModel.peoplePagedList.size)
 
         if(oldCount == viewModel.peoplePagedList.size) viewModel.persistenceCounter++ else viewModel.persistenceCounter = 0
-        if(viewModel.persistenceCounter > 5) Toast.makeText(this,"Chill... We ran out of people.", Toast.LENGTH_SHORT).show()
+        if(viewModel.persistenceCounter > 3) Toast.makeText(this,"Chill... We ran out of people.", Toast.LENGTH_SHORT).show()
 
         //after the initial load of data, call fetchPeople() again if the recyclerView height < screen height.
         binding.rvPeople.measure(View.MeasureSpec.makeMeasureSpec(binding.rvPeople.width, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED)
