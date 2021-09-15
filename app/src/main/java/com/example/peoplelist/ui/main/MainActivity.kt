@@ -48,19 +48,11 @@ class MainActivity : AppCompatActivity() {
         val oldCount = viewModel.peoplePagedList.size
 
         list.forEach {
-            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(
-                it
-            )  //preventing id duplicates.
+            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(it)  //preventing id duplicates.
         }
         binding.rvPeople.adapter?.notifyItemRangeInserted(oldCount, viewModel.peoplePagedList.size)
 
-        if (oldCount == viewModel.peoplePagedList.size) viewModel.persistenceCounter++ else viewModel.persistenceCounter =
-            0
-        if (viewModel.persistenceCounter > 2) Toast.makeText(
-            this,
-            "Chill... We ran out of people.",
-            Toast.LENGTH_SHORT
-        ).show()
+        tryHardDetector(oldCount)
 
         //after the initial load of data, call fetchPeople() again if the recyclerView height < screen height.
         binding.rvPeople.measure(
@@ -74,6 +66,16 @@ class MainActivity : AppCompatActivity() {
         if (recyclerHeight < screenHeight) {
             fetchPeople()
         }
+    }
+
+    //when there is no possible unique id to fetch.
+    private fun tryHardDetector(oldSize: Int){
+        if (oldSize == viewModel.peoplePagedList.size) viewModel.persistenceCounter++ else viewModel.persistenceCounter = 0
+        if (viewModel.persistenceCounter > 2) Toast.makeText(
+            this,
+            "Chill... We ran out of people.",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun initViews() {
@@ -182,7 +184,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showProgress(show: Boolean) {
         if (show) {
-            if (!isProgressShown) {
+            if (!isProgressShown) {  //prevents crash caused by dialog duplicates.
                 progressDialog?.show(supportFragmentManager, "ProgressDialog")
                 isProgressShown = true
             }

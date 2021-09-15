@@ -34,8 +34,8 @@ class MainViewModel(private val repository: MainRepository): ViewModel() {
             }
             when(response){
                 is BaseResult.Success -> {
-                    response.body.people.distinctBy { it.id }
-                    nextValue = response.body.next
+                    response.body.people.distinctBy { it.id } //prevents id duplicates in currently loaded group.
+                    nextValue = response.body.next           // sets the required value for loading the next page.
                     _peopleListLiveData.value = response.body
                 }
                 is BaseResult.Error -> {
