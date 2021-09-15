@@ -13,7 +13,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.example.peoplelist.R
 import com.example.peoplelist.databinding.ActivityMainBinding
 import com.example.peoplelist.entity.Person
@@ -49,18 +48,30 @@ class MainActivity : AppCompatActivity() {
         val oldCount = viewModel.peoplePagedList.size
 
         list.forEach {
-            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(it)  //preventing id duplicates.
+            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(
+                it
+            )  //preventing id duplicates.
         }
         binding.rvPeople.adapter?.notifyItemRangeInserted(oldCount, viewModel.peoplePagedList.size)
 
-        if(oldCount == viewModel.peoplePagedList.size) viewModel.persistenceCounter++ else viewModel.persistenceCounter = 0
-        if(viewModel.persistenceCounter > 3) Toast.makeText(this,"Chill... We ran out of people.", Toast.LENGTH_SHORT).show()
+        if (oldCount == viewModel.peoplePagedList.size) viewModel.persistenceCounter++ else viewModel.persistenceCounter =
+            0
+        if (viewModel.persistenceCounter > 2) Toast.makeText(
+            this,
+            "Chill... We ran out of people.",
+            Toast.LENGTH_SHORT
+        ).show()
 
         //after the initial load of data, call fetchPeople() again if the recyclerView height < screen height.
-        binding.rvPeople.measure(View.MeasureSpec.makeMeasureSpec(binding.rvPeople.width, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED)
+        binding.rvPeople.measure(
+            View.MeasureSpec.makeMeasureSpec(
+                binding.rvPeople.width,
+                View.MeasureSpec.EXACTLY
+            ), View.MeasureSpec.UNSPECIFIED
+        )
         val recyclerHeight = binding.rvPeople.measuredHeight
         val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-        if(recyclerHeight < screenHeight){
+        if (recyclerHeight < screenHeight) {
             fetchPeople()
         }
     }
@@ -93,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 setPeopleList(it.people)
             } else {
                 if (viewModel.peoplePagedList.isEmpty()) {
-                   emptyListViewSetter(true)
+                    emptyListViewSetter(true)
                 }
             }
             binding.srMain.isRefreshing = false
@@ -106,19 +117,20 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun emptyListViewSetter(isEmptyList: Boolean){
-        if(isEmptyList){
+    private fun emptyListViewSetter(isEmptyList: Boolean) {
+        if (isEmptyList) {
             binding.rvPeople.gone()
             binding.tvNobody.visible()
             binding.tvTryAgain.visible()
             binding.ivRefresh.visible()
-        }else{
+        } else {
             binding.rvPeople.visible()
             binding.tvNobody.gone()
             binding.tvTryAgain.gone()
             binding.ivRefresh.gone()
         }
     }
+
     private fun initListeners() {
         binding.rvPeople.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -129,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.tvTryAgain.setOnClickListener{
+        binding.tvTryAgain.setOnClickListener {
             fetchPeople()
             binding.tvTryAgain.gone()
             binding.ivRefresh.gone()
@@ -144,16 +156,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchPeople(){
+    private fun fetchPeople() {
         binding.srMain.isRefreshing = true
         showProgress(true)
         viewModel.fetchPeople(viewModel.nextValue)
     }
 
-    private fun showErrorBottomSheet(errorDescription: String){
-        val errorBottomSheet = BottomSheetDialog(this,R.style.BottomSheetDialogTheme)
-        val bottomSheetView = LayoutInflater.from(applicationContext).inflate(R.layout.bottom_sheet,
-            findViewById<ConstraintLayout>(R.id.bottomSheet))
+    private fun showErrorBottomSheet(errorDescription: String) {
+        val errorBottomSheet = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
+        val bottomSheetView = LayoutInflater.from(applicationContext).inflate(
+            R.layout.bottom_sheet,
+            findViewById<ConstraintLayout>(R.id.bottomSheet)
+        )
         bottomSheetView.findViewById<TextView>(R.id.tvErrorDescription).text = errorDescription
         bottomSheetView.findViewById<Button>(R.id.btRetry).setOnClickListener {
             fetchPeople()
