@@ -8,7 +8,7 @@
         android:padding="16dp">
 
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/tvPerson"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

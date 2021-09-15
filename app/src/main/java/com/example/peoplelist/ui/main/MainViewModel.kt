@@ -8,6 +8,7 @@ import com.example.peoplelist.base.BaseResult
 import com.example.peoplelist.entity.FetchError
 import com.example.peoplelist.entity.FetchResponse
 import com.example.peoplelist.entity.Person
+import com.example.peoplelist.ui.dialog.InvisibleProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,6 +23,8 @@ class MainViewModel(private val repository: MainRepository): ViewModel() {
     private val _eventOnError = MutableLiveData<FetchError>()
     val eventOnError: LiveData<FetchError> get() = _eventOnError
 
+    var progressDialog: InvisibleProgressDialog? = null
+    var isProgressShown = false
     var nextValue: String? = null
     var peoplePagedList = mutableListOf<Person>()
     var persistenceCounter = 0
@@ -44,4 +47,5 @@ class MainViewModel(private val repository: MainRepository): ViewModel() {
             }
         }
     }
+
 }

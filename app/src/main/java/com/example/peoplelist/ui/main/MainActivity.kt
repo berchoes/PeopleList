@@ -27,8 +27,6 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by inject()
     private lateinit var binding: ActivityMainBinding
-    private var isProgressShown = false
-    private var progressDialog: InvisibleProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         val oldCount = viewModel.peoplePagedList.size
 
         list.forEach {
-            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(it)  //preventing id duplicates.
+             if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(it)  //preventing id duplicates.
         }
         binding.rvPeople.adapter?.notifyItemRangeInserted(oldCount, viewModel.peoplePagedList.size)
 
@@ -79,7 +77,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        progressDialog = InvisibleProgressDialog(this)
+        viewModel.progressDialog = InvisibleProgressDialog(this)
         binding.rvPeople.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             val decoration =
@@ -184,14 +182,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun showProgress(show: Boolean) {
         if (show) {
-            if (!isProgressShown) {  //prevents crash caused by dialog duplicates.
-                progressDialog?.show(supportFragmentManager, "ProgressDialog")
-                isProgressShown = true
+            if (!viewModel.isProgressShown) {  //prevents crash caused by dialog duplicates.
+                viewModel.progressDialog?.show(supportFragmentManager, "ProgressDialog")
+                viewModel.isProgressShown = true
             }
         } else {
-            if (isProgressShown) {
-                progressDialog?.dismiss()
-                isProgressShown = false
+            if (viewModel.isProgressShown) {
+                viewModel.progressDialog?.dismiss()
+                viewModel.isProgressShown = false
             }
         }
     }
