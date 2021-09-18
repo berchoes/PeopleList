@@ -46,11 +46,11 @@ class MainActivity : AppCompatActivity() {
         val oldCount = viewModel.peoplePagedList.size
 
         list.forEach {
-             if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(it)  //preventing id duplicates.
+            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(
+                it
+            )  //prevents id duplicates.
         }
         binding.rvPeople.adapter?.notifyItemRangeInserted(oldCount, viewModel.peoplePagedList.size)
-
-        tryHardDetector(oldCount)
 
         //after the initial load of data, call fetchPeople() again if the recyclerView height < screen height.
         binding.rvPeople.measure(
@@ -64,16 +64,6 @@ class MainActivity : AppCompatActivity() {
         if (recyclerHeight < screenHeight) {
             fetchPeople()
         }
-    }
-
-    //when there is no possible unique id to fetch.
-    private fun tryHardDetector(oldSize: Int){
-        if (oldSize == viewModel.peoplePagedList.size) viewModel.persistenceCounter++ else viewModel.persistenceCounter = 0
-        if (viewModel.persistenceCounter > 2) Toast.makeText(
-            this,
-            "Chill... We ran out of people.",
-            Toast.LENGTH_SHORT
-        ).show()
     }
 
     private fun initViews() {
@@ -99,9 +89,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeEvents() {
         viewModel.peopleListLiveData.observe(this, {
-            if (it.people.isNotEmpty()) {
+            if (it.isNotEmpty()) {
                 emptyListViewSetter(false)
-                setPeopleList(it.people)
+                setPeopleList(it)
             } else {
                 if (viewModel.peoplePagedList.isEmpty()) {
                     emptyListViewSetter(true)
@@ -131,6 +121,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun listViewSetter() {
+        fetchPeople()
+        binding.tvTryAgain.gone()
+        binding.ivRefresh.gone()
+        binding.tvNobody.gone()
+    }
+
     private fun initListeners() {
 
         binding.rvPeople.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -144,24 +141,26 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.tvTryAgain.setOnClickListener {
-            fetchPeople()
-            binding.tvTryAgain.gone()
-            binding.ivRefresh.gone()
-            binding.tvNobody.gone()
+            listViewSetter()
         }
 
         binding.ivRefresh.setOnClickListener {
-            fetchPeople()
-            binding.tvTryAgain.gone()
-            binding.tvNobody.gone()
-            binding.ivRefresh.gone()
+            listViewSetter()
         }
     }
 
     private fun fetchPeople() {
-        binding.srMain.isRefreshing = true
-        showProgress(true)
-        viewModel.fetchPeople(viewModel.nextValue)
+        if (viewModel.totalPeopleCount == null || viewModel.peoplePagedList.size < viewModel.totalPeopleCount!!) {
+            binding.srMain.isRefreshing = true
+            showProgress(true)
+            viewModel.fetchPeople(viewModel.nextValue)
+        } else {
+            Toast.makeText(
+                this,
+                "Sorry... We ran out of people.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun showErrorBottomSheet(errorDescription: String) {
@@ -184,7 +183,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showProgress(show: Boolean) {
         if (show) {
-            if (!viewModel.isProgressShown) {  //prevents crash caused by dialog duplicates.
+            if (!viewModel.isProgressShown) {  //prevents the crash caused by dialog duplicates.
                 viewModel.progressDialog?.show(supportFragmentManager, "ProgressDialog")
                 viewModel.isProgressShown = true
             }

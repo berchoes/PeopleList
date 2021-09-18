@@ -13,7 +13,7 @@ class InvisibleProgressDialog(private val activity: Activity) : DialogFragment()
 
     override fun onCreateDialog(savedInstanceState: Bundle?) = Dialog(activity).apply {
         setContentView(R.layout.progress_dialog)
-        window?.setDimAmount(0.08f)
+        window?.setDimAmount(0.06f)
         isCancelable = false
     }
 }

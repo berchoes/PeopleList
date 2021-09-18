@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.peoplelist.base.BaseResult
 import com.example.peoplelist.entity.FetchError
-import com.example.peoplelist.entity.FetchResponse
 import com.example.peoplelist.entity.Person
 import com.example.peoplelist.ui.dialog.InvisibleProgressDialog
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +17,8 @@ import kotlinx.coroutines.withContext
  */
 class MainViewModel(private val repository: MainRepository): ViewModel() {
 
-    private val _peopleListLiveData = MutableLiveData<FetchResponse>()
-    val peopleListLiveData: LiveData<FetchResponse> get() = _peopleListLiveData
+    private val _peopleListLiveData = MutableLiveData<List<Person>>()
+    val peopleListLiveData: LiveData<List<Person>> get() = _peopleListLiveData
     private val _eventOnError = MutableLiveData<FetchError>()
     val eventOnError: LiveData<FetchError> get() = _eventOnError
 
@@ -27,7 +26,7 @@ class MainViewModel(private val repository: MainRepository): ViewModel() {
     var isProgressShown = false
     var nextValue: String? = null
     var peoplePagedList = mutableListOf<Person>()
-    var persistenceCounter = 0
+    var totalPeopleCount : Int? = null
 
 
     fun fetchPeople(next: String?){
@@ -38,8 +37,10 @@ class MainViewModel(private val repository: MainRepository): ViewModel() {
             when(response){
                 is BaseResult.Success -> {
                     response.body.people.distinctBy { it.id } //prevents id duplicates in currently loaded group.
-                    nextValue = response.body.next           // sets the required value for loading the next page.
-                    _peopleListLiveData.value = response.body
+                    nextValue = response.body.next // sets the required value for loading the next page.
+                    if (totalPeopleCount == null) totalPeopleCount = response.body.totalSize
+                    _peopleListLiveData.value = response.body.people
+
                 }
                 is BaseResult.Error -> {
                     _eventOnError.value = response.error

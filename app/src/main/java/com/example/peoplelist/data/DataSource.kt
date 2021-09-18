@@ -82,10 +82,10 @@ class DataSource {
                     fetchedPeople = arrayListOf()
                     responseNext = null
                 }
-                response = FetchResponse(people = fetchedPeople, next = responseNext)
+                response = FetchResponse(people = fetchedPeople, next = responseNext, totalSize = peopleCount )
             }
         }
-        return ProcessResult(response, error, waitTime)
+        return ProcessResult(response, error,waitTime)
     }
 }
 
