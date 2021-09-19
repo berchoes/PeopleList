@@ -46,9 +46,7 @@ class MainActivity : AppCompatActivity() {
         val oldCount = viewModel.peoplePagedList.size
 
         list.forEach {
-            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(
-                it
-            )  //prevents id duplicates.
+            if (viewModel.peoplePagedList.none { p -> it.id == p.id }) viewModel.peoplePagedList.add(it)  //prevents id duplicates.
         }
         binding.rvPeople.adapter?.notifyItemRangeInserted(oldCount, viewModel.peoplePagedList.size)
 
@@ -61,9 +59,8 @@ class MainActivity : AppCompatActivity() {
         )
         val recyclerHeight = binding.rvPeople.measuredHeight
         val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-        if (recyclerHeight < screenHeight) {
-            fetchPeople()
-        }
+
+        if (recyclerHeight < screenHeight) fetchPeople()
     }
 
     private fun initViews() {
@@ -82,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         binding.srMain.setOnRefreshListener {
             viewModel.nextValue = null
             viewModel.peoplePagedList.clear()
+            viewModel.totalPeopleCount = null
             binding.rvPeople.adapter?.notifyDataSetChanged()
             viewModel.fetchPeople(viewModel.nextValue)
         }
